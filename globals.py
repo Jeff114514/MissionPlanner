@@ -41,7 +41,17 @@ def route_lengths():
             if min(a) < fb:
                 fb-=0.05
             a = random_range(numTrucks, upper)
+    # print(a)
     return a
 
 def print_all():
     print(numNodes, numTrucks, numGenerations, populationSize)
+
+def timmer(func):
+    def wrapper(*args, **kwargs):
+        start = time.time()
+        result = func(*args, **kwargs)
+        end = time.time()
+        print(f"{func.__name__} Time taken: {end - start} seconds")
+        return result
+    return wrapper

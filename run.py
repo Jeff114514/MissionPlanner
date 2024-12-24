@@ -10,8 +10,8 @@ import math
 '''
 dict = {
     '30_10': [30, 10],
-    # '200_20': [200, 20],
-    # '500_30': [500, 30]
+    '200_20': [200, 20],
+    '500_30': [500, 30]
 }
 
 for key, value in dict.items():
@@ -30,7 +30,7 @@ for key, value in dict.items():
     xaxis2 = df2['xaxis']
     yaxis2 = df2['yaxis']
 
-    plt.plot(xaxis, yaxis, 'r-')
-    plt.plot(xaxis2, yaxis2, 'b-')
+    plt.plot(xaxis, yaxis, 'r-', label='GA')
+    plt.plot(xaxis2, yaxis2, 'b-', label='myGA')
 
     plt.savefig('result_'+str(numNodes)+'_'+str(numTrucks)+'.png')
