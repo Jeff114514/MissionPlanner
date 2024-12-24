@@ -10,12 +10,15 @@ class GA:
             newPopulation.saveRoute(0, pop.getFittest())
             elitismOffset = 1
 
-        # 预先计算累积适应度
-        cumulativeFitness = cls.precomputeCumulativeFitness(pop)
+        cumulative_fitness = []
+        current_sum = 0
+        for route in pop.routes:
+            current_sum += route.getFitness()
+            cumulative_fitness.append(current_sum)
 
         for i in range(elitismOffset, newPopulation.populationSize):
-            parent1 = cls.rouletteWheelSelection(pop, cumulativeFitness)
-            parent2 = cls.rouletteWheelSelection(pop, cumulativeFitness)
+            parent1 = cls.rouletteWheelSelection(pop, cumulative_fitness)
+            parent2 = cls.rouletteWheelSelection(pop, cumulative_fitness)
             child = cls.pmxCrossover(parent1, parent2)
             newPopulation.saveRoute(i, child)
 
@@ -109,30 +112,25 @@ class GA:
 
         route.routeLengths[index1] = len(route.route[index1])
         route.routeLengths[index2] = len(route.route[index2])
-        
-    @classmethod
-    def precomputeCumulativeFitness(cls, pop):
-        cumulativeFitness = []
-        currentSum = 0
-        for route in pop.routes:
-            currentSum += route.getFitness()
-            cumulativeFitness.append(currentSum)
-        return cumulativeFitness
 
     @classmethod
-    def rouletteWheelSelection(cls, pop, cumulativeFitness):
-        maxFitness = cumulativeFitness[-1]
-        pick = random.uniform(0, maxFitness)
-        index = cls.binarySearch(cumulativeFitness, pick)
-        return pop.routes[index]
+    def rouletteWheelSelection(cls, pop, cumulative_fitness):
+        max_fitness = cumulative_fitness[-1]
+        winners = Population(tournamentSize, False)
+        for i in range(tournamentSize):
+            pick = random.uniform(0, max_fitness)
+            idx = cls.binarySearch(cumulative_fitness, pick)
+            winners.saveRoute(i, pop.getRoute(idx))
+        return winners.getFittest()
 
-    @staticmethod
-    def binarySearch(cumulativeFitness, pick):
-        low, high = 0, len(cumulativeFitness) - 1
-        while low < high:
+    @classmethod
+    def binarySearch(cls, cumulative_fitness, pick):
+        low = 0
+        high = len(cumulative_fitness) - 1
+        while low <= high:
             mid = (low + high) // 2
-            if cumulativeFitness[mid] < pick:
+            if cumulative_fitness[mid] < pick:
                 low = mid + 1
             else:
-                high = mid
+                high = mid - 1
         return low
