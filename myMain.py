@@ -12,8 +12,8 @@ globals.numTrucks = int(args[2])
 globals.seedValue = int(args[3])
 Fn = args[4]
 #由numNodes和numTrucks计算numGenerations
-globals.numGenerations = int((math.log(globals.numNodes*globals.numTrucks, math.e)+1) * 10)
-globals.populationSize = int(math.log(globals.numNodes * globals.numTrucks, 2) * 20 - globals.numTrucks)
+globals.numGenerations = int((math.log(globals.numNodes*globals.numTrucks, math.e)+1) * 12)
+globals.populationSize = int(math.log(globals.numNodes * globals.numTrucks, 2) * 15 - globals.numTrucks)
 
 
 if Fn == 'myGA':
