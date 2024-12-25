@@ -4,11 +4,7 @@ import pandas as pd
 import math
 import time
 from myACO import ACO
-'''
-1、	在30个任务点和10架无人机的情况下得到收敛解并可视化出来。
-2、	在200个任务点和20架无人机的情况下得到收敛解并可视化出来。
-3、	在500个任务点和30架无人机的情况下得到收敛解并可视化出来。
-'''
+
 dict = { # 目标数，无人机数，迭代次数，种群大小
     '30_10': [30, 10, 120, 80],
     '200_20': [200, 20, 120, 100],
@@ -37,12 +33,33 @@ for key, value in dict.items():
     xaxis3 = df3['xaxis']
     yaxis3 = df3['yaxis']
 
+    # for i, y in enumerate(yaxis):
+    #     if i == 0:
+    #         yaxis[i] = y
+    #     else:
+    #         yaxis[i] = min(y, yaxis[i-1])
+
+    # for i, y in enumerate(yaxis2):
+    #     if i == 0:
+    #         yaxis2[i] = y
+    #     else:
+    #         yaxis2[i] = min(y, yaxis2[i-1])
+    # for i, y in enumerate(yaxis3):
+    #     if i == 0:
+    #         yaxis3[i] = y
+    #     else:
+    #         yaxis3[i] = min(y, yaxis3[i-1])
+
     #reset plt
     plt.clf()
-    plt.title('GA-r, myGA-b, myPSO-g')
+    plt.title('numNodes: '+str(numNodes)+', numBots: '+str(numTrucks))
 
     plt.plot(xaxis, yaxis, 'r-', label='GA')
     plt.plot(xaxis2, yaxis2, 'b-', label='myGA')
     plt.plot(xaxis3, yaxis3, 'g-', label='myPSO')
+    plt.legend()
 
     plt.savefig('result_'+str(numNodes)+'_'+str(numTrucks)+'.png')
+
+    # df = pd.DataFrame({'GA': yaxis, 'myGA': yaxis2, 'myPSO': yaxis3, 'iteriation': range(max(len(yaxis), len(yaxis2), len(yaxis3)))})
+    # df.to_csv('result_'+str(numNodes)+'_'+str(numTrucks)+'.csv', index=False)

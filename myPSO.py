@@ -2,6 +2,7 @@ from population import *
 import copy
 class GA:
     globalBest = Population(1, False)
+    momentum = [0.2] * populationSize
 
     @classmethod
     def evolvePopulation(cls, pop):
@@ -11,6 +12,9 @@ class GA:
         else:
             if pop.getFittest().getFitness() > cls.globalBest.getFittest().getFitness():
                 cls.globalBest.saveRoute(0, pop.getFittest())
+                cls.momentum = [min(m*1.08, 0.2) for m in cls.momentum]
+            else:
+                cls.momentum = [m*0.9 for m in cls.momentum]
 
         cumulative_fitness = []
         current_sum = 0
@@ -22,19 +26,25 @@ class GA:
 
         for i in range(0, newPopulation.populationSize):
             cur_route = pop.getRoute(index[i])
-            if random.random() < 0.4:
-                parent_route = pop.getFittest()
-            elif random.random() < 0.6:
-                parent_route = cls.rouletteWheelSelection(pop, index, cumulative_fitness)
-            else:
+            rand_val = random.random()
+            if rand_val < 0.16 + cls.momentum[i]:
                 parent_route = cls.globalBest.getFittest()
+            elif rand_val < 0.32 + cls.momentum[i]:
+                parent_route = pop.getFittest()
+            else:
+                parent_route = cls.rouletteWheelSelection(pop, index, cumulative_fitness)
+
             child = cls.pmxCrossover(cur_route, parent_route)
             if child.getFitness() > cls.globalBest.getFittest().getFitness():
                 cls.globalBest.saveRoute(0, child)
             elif child.getFitness() > cur_route.getFitness():
-                if random.random() < 0.6:
+                if random.random() < 0.4 + cls.momentum[i]:
                     newPopulation.saveRoute(i, child)
+                else:
+                    newPopulation.saveRoute(i, cur_route)
             else:
+                if cls.momentum[i] < 0.01:
+                    cls.momentum[i] = 0.2
                 newPopulation.saveRoute(i, cur_route)
             
         for i in range(0, newPopulation.populationSize):
