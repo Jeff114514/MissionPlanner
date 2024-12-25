@@ -9,8 +9,8 @@ pbar = progressbar.ProgressBar()
 args = sys.argv
 globals.numNodes = int(args[1])
 globals.numTrucks = int(args[2])
-globals.numIterations = int(args[3])
-globals.numPopulations = int(args[4])
+globals.numGenerations = int(args[3])
+globals.populationSize = int(args[4])
 globals.seedValue = int(args[5])
 Fn = args[6]
 # #由numNodes和numTrucks计算
@@ -35,12 +35,11 @@ for i in range(numNodes):
     RouteManager.addDustbin(Dustbin())
     globals.dustbins.append(RouteManager.getDustbin(i))
 
-data = []
-for i in range(len(globals.dustbins)):
-    data.append([globals.dustbins[i].getX(), globals.dustbins[i].getY()])
-data = pd.DataFrame({'x': [i[0] for i in data], 'y': [i[1] for i in data]})
-data.to_csv('dustbins'+str(numNodes)+'.csv', index=False)
-
+# data = []
+# for i in range(len(globals.dustbins)):
+#     data.append([globals.dustbins[i].getX(), globals.dustbins[i].getY()])
+# data = pd.DataFrame({'x': [i[0] for i in data], 'y': [i[1] for i in data]})
+# data.to_csv('dustbins'+str(numNodes)+'.csv', index=False)
 
 startPoint = (RouteManager.getDustbin(0).getX(), RouteManager.getDustbin(0).getY())
     

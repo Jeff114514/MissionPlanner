@@ -48,7 +48,7 @@ def route_lengths():
     return a
 
 def print_all():
-    print(numNodes, numTrucks, numGenerations, populationSize, tournamentSize)
+    print(numNodes, numTrucks, numGenerations, populationSize)
 
 def timmer(func):
     def wrapper(*args, **kwargs):
