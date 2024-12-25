@@ -12,7 +12,7 @@ numNodes = 30
 numGenerations = 70
 # size of population
 populationSize = 100
-mutationRate = 0.02
+mutationRate = 0.05
 tournamentSize = 10
 elitism = True
 # number of trucks
@@ -65,6 +65,9 @@ def initDistanceMatrix():
         for j in range(len(dustbins)):
             dx = dustbins[i].getX() - dustbins[j].getX()
             dy = dustbins[i].getY() - dustbins[j].getY()
-            Matrix[i][j] = math.sqrt(dx*dx + dy*dy)
+            if dustbins[i].id != -1 or dustbins[j].id != -1:
+                Matrix[i][j] = math.sqrt(dx*dx + dy*dy)
+            else:
+                Matrix[i][j] = math.inf
     return Matrix
 

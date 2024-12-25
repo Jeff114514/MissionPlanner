@@ -112,8 +112,8 @@ class GA:
     @classmethod
     def rouletteWheelSelection(cls, pop, index, cumulative_fitness):
         max_fitness = cumulative_fitness[-1]
-        winners = Population(tournamentSize, False)
-        for i in range(tournamentSize):
+        winners = Population(3, False)
+        for i in range(3):
             pick = random.uniform(0, max_fitness)
             idx = cls.binarySearch(cumulative_fitness, pick)
             winners.saveRoute(i, pop.getRoute(index[idx]))

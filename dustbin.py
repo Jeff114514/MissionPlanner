@@ -17,10 +17,10 @@ class Dustbin:
 			self.x = x
 			self.y = y
 			if x == -1 and y == -1:
-				self.id = -1
+				#temporary id
+				self.id = None
 			else:
-				print(x, y)
-				raise Exception("not init")
+				self.id = -1
 
 	def getX (self):
 		return self.x

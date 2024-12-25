@@ -12,16 +12,16 @@ globals.numTrucks = int(args[2])
 globals.seedValue = int(args[3])
 Fn = args[4]
 #由numNodes和numTrucks计算
-globals.tournamentSize = int(math.log(globals.numNodes * globals.numTrucks, 2) + globals.numTrucks)
-globals.numGenerations = int((math.log(globals.numNodes*globals.numTrucks, math.e)+1) * 12)
-globals.populationSize = int(math.log(globals.numNodes * globals.numTrucks, 2) * 20 - globals.numTrucks)
+globals.numGenerations = int((math.log(globals.numNodes*globals.numTrucks, math.e)+2) * 11.4)
+globals.populationSize = int((math.log(globals.numNodes * globals.numTrucks, 2)+4) * 5.14 + globals.numTrucks)
 
 
 if Fn == 'myGA':
+    globals.numGenerations *= 2
     from myGA import *
 elif Fn == 'GA':
     from galogic import *
-elif Fn == 'myPSO':
+elif Fn == 'myACO':
     from myACO import *
 else:
     print('Invalid function name')
@@ -35,6 +35,14 @@ for i in range(numNodes):
     RouteManager.addDustbin(Dustbin())
     globals.dustbins.append(RouteManager.getDustbin(i))
 
+startPoint = (RouteManager.getDustbin(0).getX(), RouteManager.getDustbin(0).getY())
+
+if Fn == 'myACO':
+    for i in range(numTrucks - 1):
+        RouteManager.addDustbin(Dustbin(startPoint[0], startPoint[1]))
+        globals.dustbins.append(RouteManager.getDustbin(i))
+    
+
 yaxis = [] # Fittest value (distance)
 xaxis = [] # Generation count
 
@@ -44,40 +52,45 @@ basic_route = globalRoute.getRoute()
 print ('Initial minimum distance: ' + str(globalRoute.getDistance()))
 
 # Start evolving
-cnt = 0
+cnt = 50
 for i in pbar(range(numGenerations)):
+    cnt -= 1
     pop = GA.evolvePopulation(pop)
     localRoute = pop.getFittest()
     if globalRoute.getDistance() > localRoute.getDistance():
         globalRoute = localRoute
+        cnt = 50
     yaxis.append(localRoute.getDistance())
     xaxis.append(i)
+    if cnt <= 0:
+        print("stop at generation", i)
+        break
 final_route = globalRoute.getRoute()
 print ('Global minimum distance: ' + str(globalRoute.getDistance()))
 print ('Final Route: ' + globalRoute.toString())
 
-#draw all routes in different colors for different trucks
-cnt = 0
-for i in range(numTrucks):
-    if len(final_route[i]) > 0:
-        cnt += 1
-    plt.plot([dustbin.getX() for dustbin in final_route[i]], [dustbin.getY() for dustbin in final_route[i]], color=plt.cm.rainbow(cnt/numTrucks))
-#draw all dustbins
-for i in range(numNodes):
-    plt.scatter(globals.dustbins[i].getX(), globals.dustbins[i].getY(), color='blue')
-plt.show()
-plt.clf()
+# #draw all routes in different colors for different trucks
+# cnt = 0
+# for i in range(numTrucks):
+#     if len(final_route[i]) > 0:
+#         cnt += 1
+#     plt.plot([dustbin.getX() for dustbin in final_route[i]], [dustbin.getY() for dustbin in final_route[i]], color=plt.cm.rainbow(cnt/numTrucks))
+# #draw all dustbins
+# for i in range(numNodes):
+#     plt.scatter(globals.dustbins[i].getX(), globals.dustbins[i].getY(), color='blue')
+# plt.show()
+# plt.clf()
 
-cnt = 0
-for i in range(numTrucks):
-    if len(basic_route[i]) > 0:
-        cnt += 1
-    plt.plot([dustbin.getX() for dustbin in basic_route[i]], [dustbin.getY() for dustbin in basic_route[i]], color=plt.cm.rainbow(cnt/numTrucks))
-#draw all dustbins
-for i in range(numNodes):
-    plt.scatter(globals.dustbins[i].getX(), globals.dustbins[i].getY(), color='blue')
-plt.show()
-plt.clf()
+# cnt = 0
+# for i in range(numTrucks):
+#     if len(basic_route[i]) > 0:
+#         cnt += 1
+#     plt.plot([dustbin.getX() for dustbin in basic_route[i]], [dustbin.getY() for dustbin in basic_route[i]], color=plt.cm.rainbow(cnt/numTrucks))
+# #draw all dustbins
+# for i in range(numNodes):
+#     plt.scatter(globals.dustbins[i].getX(), globals.dustbins[i].getY(), color='blue')
+# plt.show()
+# plt.clf()
 
 df = pd.DataFrame({'xaxis': xaxis, 'yaxis': yaxis, 'seed': localSeed})
 
