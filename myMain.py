@@ -21,8 +21,8 @@ if Fn == 'myGA':
     from myGA import *
 elif Fn == 'GA':
     from galogic import *
-elif Fn == 'myACO':
-    from myACO import *
+elif Fn == 'myPSO':
+    from myPSO import *
 else:
     print('Invalid function name')
     exit()
@@ -36,11 +36,6 @@ for i in range(numNodes):
     globals.dustbins.append(RouteManager.getDustbin(i))
 
 startPoint = (RouteManager.getDustbin(0).getX(), RouteManager.getDustbin(0).getY())
-
-if Fn == 'myACO':
-    for i in range(numTrucks - 1):
-        RouteManager.addDustbin(Dustbin(startPoint[0], startPoint[1]))
-        globals.dustbins.append(RouteManager.getDustbin(i))
     
 
 yaxis = [] # Fittest value (distance)
@@ -94,7 +89,4 @@ print ('Final Route: ' + globalRoute.toString())
 
 df = pd.DataFrame({'xaxis': xaxis, 'yaxis': yaxis, 'seed': localSeed})
 
-if Fn == 'myGA':
-    df.to_csv('myMain'+str(numNodes)+'_'+str(numTrucks)+'.csv', index=False)
-else:
-    df.to_csv('main'+str(numNodes)+'_'+str(numTrucks)+'.csv', index=False)
+df.to_csv(Fn+str(numNodes)+'_'+str(numTrucks)+'.csv', index=False)

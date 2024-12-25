@@ -3,6 +3,7 @@ Represents the chromosomes in GA's population.
 The object is collection of individual routes taken by trucks.
 '''
 from routemanager import *
+import copy
 
 class Route:
     # Good old constructor
@@ -109,3 +110,7 @@ class Route:
             if self.routeLengths[i] > 0:
                 route[i].append(self.getDustbin(i,0))
         return route
+
+    def copy(self):
+        return copy.deepcopy(self)
+

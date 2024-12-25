@@ -10,8 +10,8 @@ import time
 '''
 dict = {
     '30_10': [30, 10],
-    '200_20': [200, 20],
-    '500_30': [500, 30]
+    # '200_20': [200, 20],
+    # '500_30': [500, 30]
 }
 seed = int(time.time())
 
@@ -19,6 +19,7 @@ for key, value in dict.items():
     numNodes, numTrucks = value
     os.system("python myMain.py "+str(numNodes)+" "+str(numTrucks)+" "+str(seed)+" GA")
     os.system("python myMain.py "+str(numNodes)+" "+str(numTrucks)+" "+str(seed)+" myGA")
+    os.system("python myMain.py "+str(numNodes)+" "+str(numTrucks)+" "+str(seed)+" myPSO")
 
 for key, value in dict.items():
     numNodes, numTrucks = value

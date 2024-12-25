@@ -12,7 +12,7 @@ numNodes = 30
 numGenerations = 70
 # size of population
 populationSize = 100
-mutationRate = 0.05
+mutationRate = 0.04
 tournamentSize = 10
 elitism = True
 # number of trucks

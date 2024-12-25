@@ -87,39 +87,42 @@ class GA:
         #print ('Indexes selected: ' + str(index1) + ',' + str(index2))
         if route.routeLengths[index1] <= 2 or route.routeLengths[index2] <= 2 or random.randrange(1) < mutationRate:
             return
+
         #generate replacement range for 1
         route1startPos = 0
         route1lastPos = 0
-        while route1startPos > route1lastPos or route1startPos == 1:
+        while route1startPos >= route1lastPos or route1startPos == 1:
             route1startPos = random.randint(1, route.routeLengths[index1] - 1)
             route1lastPos = random.randint(1, route.routeLengths[index1] - 1)
 
         #generate replacement range for 2
         route2startPos = 0
         route2lastPos = 0
-        while route2startPos > route2lastPos or route2startPos == 1:
+        while route2startPos >= route2lastPos or route2startPos == 1:
             route2startPos = random.randint(1, route.routeLengths[index2] - 1)
             route2lastPos= random.randint(1, route.routeLengths[index2] - 1)
-        # print ('startPos, lastPos: ' + str(route1startPos) + ',' + str(route1lastPos) + ',' + str(route2startPos) + ',' + str(route2lastPos))
+
+        #print ('startPos, lastPos: ' + str(route1startPos) + ',' + str(route1lastPos) + ',' + str(route2startPos) + ',' + str(route2lastPos))
         swap1 = [] # values from 1
         swap2 = [] # values from 2
 
-        # pop all the values to be replaced
-        for i in range(route1startPos, route1lastPos + 1):
-            swap1.append(route.route[index1].pop(route1startPos))
+        if random.randrange(1) < mutationRate:
+            # pop all the values to be replaced
+            for i in range(route1startPos, route1lastPos + 1):
+                swap1.append(route.route[index1].pop(route1startPos))
 
-        for i in range(route2startPos, route2lastPos + 1):
-            swap2.append(route.route[index2].pop(route2startPos))
+            for i in range(route2startPos, route2lastPos + 1):
+                swap2.append(route.route[index2].pop(route2startPos))
 
-        del1 = (route1lastPos - route1startPos + 1)
-        del2 = (route2lastPos - route2startPos + 1)
+            del1 = (route1lastPos - route1startPos + 1)
+            del2 = (route2lastPos - route2startPos + 1)
 
-        # add to new location by pushing
-        route.route[index1][route1startPos:route1startPos] = swap2
-        route.route[index2][route2startPos:route2startPos] = swap1
+            # add to new location by pushing
+            route.route[index1][route1startPos:route1startPos] = swap2
+            route.route[index2][route2startPos:route2startPos] = swap1
 
-        route.routeLengths[index1] = len(route.route[index1])
-        route.routeLengths[index2] = len(route.route[index2])
+            route.routeLengths[index1] = len(route.route[index1])
+            route.routeLengths[index2] = len(route.route[index2])
 
     # Tournament Selection: choose a random set of chromosomes and find the fittest among them 
     @classmethod
