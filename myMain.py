@@ -93,6 +93,6 @@ plt.savefig(Fn+str(numNodes)+'_'+str(numTrucks)+'_'+str(numGenerations)+'_'+str(
 # plt.show()
 # plt.clf()
 
-df = pd.DataFrame({'xaxis': xaxis, 'yaxis': yaxis, 'seed': localSeed})
+df = pd.DataFrame({'xaxis': xaxis, 'yaxis': yaxis, 'seed': seedValue})
 
 df.to_csv(Fn+str(numNodes)+'_'+str(numTrucks)+'_'+str(numGenerations)+'_'+str(populationSize)+'.csv', index=False)
