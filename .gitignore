@@ -1,3 +1,7 @@
 __pycache__/
+.base/
 *.csv
 *.png
+.cursorignore
+myACO.py
+

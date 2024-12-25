@@ -32,9 +32,6 @@ class Population:
 
         return fittest
 
-    def populationSize(self):
-        return int(self.populationSize)
-
     # Equate current population values to that of pop
     def equals(self, pop):
         self.routes = pop.routes

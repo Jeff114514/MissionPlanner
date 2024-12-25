@@ -99,3 +99,13 @@ class Route:
             geneString += '\n'
 
         return geneString
+    
+    def getRoute(self):
+        route = []
+        for i in range(numTrucks):
+            route.append([])
+            for j in range(self.routeLengths[i]):
+                route[i].append(self.getDustbin(i,j))
+            if self.routeLengths[i] > 0:
+                route[i].append(self.getDustbin(i,0))
+        return route

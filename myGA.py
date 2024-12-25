@@ -12,13 +12,15 @@ class GA:
 
         cumulative_fitness = []
         current_sum = 0
-        for route in pop.routes:
-            current_sum += route.getFitness()
+        index = list(range(pop.populationSize))
+        random.shuffle(index)
+        for i in range(pop.populationSize):
+            current_sum += pop.getRoute(index[i]).getFitness()
             cumulative_fitness.append(current_sum)
 
         for i in range(elitismOffset, newPopulation.populationSize):
-            parent1 = cls.rouletteWheelSelection(pop, cumulative_fitness)
-            parent2 = cls.rouletteWheelSelection(pop, cumulative_fitness)
+            parent1 = cls.rouletteWheelSelection(pop, index, cumulative_fitness)
+            parent2 = cls.rouletteWheelSelection(pop, index, cumulative_fitness)
             child = cls.pmxCrossover(parent1, parent2)
             newPopulation.saveRoute(i, child)
 
@@ -30,12 +32,10 @@ class GA:
     @classmethod
     def pmxCrossover(cls, parent1, parent2):
         child = Route()
-        child.base.append(Dustbin(-1, -1))
-        startPos = random.randint(1, numNodes - 1)
-        endPos = random.randint(1, numNodes - 1)
-
-        if startPos > endPos:
-            startPos, endPos = endPos, startPos
+        child.base.append(Dustbin(-1, -1)) # since size is (numNodes - 1) by default
+        startPos = 0
+        endPos = 0
+        startPos, endPos = random.sample(range(numNodes), 2)
 
         parent1.base = [parent1.route[0][0]]
         parent2.base = [parent2.route[0][0]]
@@ -71,11 +71,7 @@ class GA:
 
     @classmethod
     def swapMutation(cls, route):
-        index1 = 0
-        index2 = 0
-        while index1 == index2:
-            index1 = random.randint(0, numTrucks - 1)
-            index2 = random.randint(0, numTrucks - 1)
+        index1, index2 = random.sample(range(numTrucks), 2)
         #print ('Indexes selected: ' + str(index1) + ',' + str(index2))
         if route.routeLengths[index1] <= 2 or route.routeLengths[index2] <= 2 or random.randrange(1) < mutationRate:
             return
@@ -114,23 +110,23 @@ class GA:
         route.routeLengths[index2] = len(route.route[index2])
 
     @classmethod
-    def rouletteWheelSelection(cls, pop, cumulative_fitness):
+    def rouletteWheelSelection(cls, pop, index, cumulative_fitness):
         max_fitness = cumulative_fitness[-1]
         winners = Population(tournamentSize, False)
         for i in range(tournamentSize):
             pick = random.uniform(0, max_fitness)
             idx = cls.binarySearch(cumulative_fitness, pick)
-            winners.saveRoute(i, pop.getRoute(idx))
+            winners.saveRoute(i, pop.getRoute(index[idx]))
         return winners.getFittest()
 
     @classmethod
     def binarySearch(cls, cumulative_fitness, pick):
         low = 0
         high = len(cumulative_fitness) - 1
-        while low <= high:
+        while low < high:
             mid = (low + high) // 2
             if cumulative_fitness[mid] < pick:
                 low = mid + 1
             else:
-                high = mid - 1
+                high = mid
         return low

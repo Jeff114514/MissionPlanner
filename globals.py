@@ -17,6 +17,9 @@ tournamentSize = 10
 elitism = True
 # number of trucks
 numTrucks = 10
+distanceMatrix = None
+dustbinInitCnt = 0
+dustbins = []
 
 def random_range(n, total):
     """Return a randomly chosen list of n positive integers summing to total.
@@ -38,7 +41,7 @@ def route_lengths():
         else:
             # if max(a) > fa:
             #     fa+=0.05
-            if min(a) < fb:
+            if min(a) < fb - 1e-3:
                 fb-=0.05
             a = random_range(numTrucks, upper)
     # print(a)
@@ -55,3 +58,13 @@ def timmer(func):
         print(f"{func.__name__} Time taken: {end - start} seconds")
         return result
     return wrapper
+
+def initDistanceMatrix():
+    Matrix = [[0 for _ in range(len(dustbins))] for _ in range(len(dustbins))]
+    for i in range(len(dustbins)):
+        for j in range(len(dustbins)):
+            dx = dustbins[i].getX() - dustbins[j].getX()
+            dy = dustbins[i].getY() - dustbins[j].getY()
+            Matrix[i][j] = math.sqrt(dx*dx + dy*dy)
+    return Matrix
+
