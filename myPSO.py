@@ -22,12 +22,17 @@ class GA:
 
         for i in range(0, newPopulation.populationSize):
             cur_route = pop.getRoute(index[i])
-            parent2 = cls.rouletteWheelSelection(pop, index, cumulative_fitness)
-            child = cls.pmxCrossover(cur_route, parent2)
+            if random.random() < 0.4:
+                parent_route = pop.getFittest()
+            elif random.random() < 0.6:
+                parent_route = cls.rouletteWheelSelection(pop, index, cumulative_fitness)
+            else:
+                parent_route = cls.globalBest.getFittest()
+            child = cls.pmxCrossover(cur_route, parent_route)
             if child.getFitness() > cls.globalBest.getFittest().getFitness():
                 cls.globalBest.saveRoute(0, child)
-            if child.getFitness() > cur_route.getFitness():
-                if random.random() < 0.5:
+            elif child.getFitness() > cur_route.getFitness():
+                if random.random() < 0.6:
                     newPopulation.saveRoute(i, child)
             else:
                 newPopulation.saveRoute(i, cur_route)
@@ -120,12 +125,9 @@ class GA:
     @classmethod
     def rouletteWheelSelection(cls, pop, index, cumulative_fitness):
         max_fitness = cumulative_fitness[-1]
-        winners = Population(3, False)
-        for i in range(3):
-            pick = random.uniform(0, max_fitness)
-            idx = cls.binarySearch(cumulative_fitness, pick)
-            winners.saveRoute(i, pop.getRoute(index[idx]))
-        return winners.getFittest()
+        pick = random.uniform(0, max_fitness)
+        idx = cls.binarySearch(cumulative_fitness, pick)
+        return pop.getRoute(index[idx])
 
     @classmethod
     def binarySearch(cls, cumulative_fitness, pick):
