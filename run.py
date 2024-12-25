@@ -6,17 +6,17 @@ import time
 from myACO import ACO
 
 dict = { # 目标数，无人机数，迭代次数，种群大小
-    '30_10': [30, 10, 120, 80],
-    '200_20': [200, 20, 120, 100],
-    '500_30': [500, 30, 120, 120]
+    '30_10': [30, 10, 3600, 100],
+    # '200_20': [200, 20, 240, 100],
+    # '500_30': [500, 30, 120, 120]
 }
 seed = int(1735126954)
 
 for key, value in dict.items():
     numNodes, numTrucks, numIterations, numPopulations = value
-    os.system("python myMain.py "+str(numNodes)+" "+str(numTrucks)+" "+str(numIterations)+" "+str(numPopulations)+" "+str(seed)+" GA")
+    # os.system("python myMain.py "+str(numNodes)+" "+str(numTrucks)+" "+str(numIterations)+" "+str(numPopulations)+" "+str(seed)+" GA")
     os.system("python myMain.py "+str(numNodes)+" "+str(numTrucks)+" "+str(numIterations)+" "+str(numPopulations)+" "+str(seed)+" myGA")
-    os.system("python myMain.py "+str(numNodes)+" "+str(numTrucks)+" "+str(numIterations)+" "+str(numPopulations)+" "+str(seed)+" myPSO")
+    # os.system("python myMain.py "+str(numNodes)+" "+str(numTrucks)+" "+str(numIterations)+" "+str(numPopulations)+" "+str(seed)+" myPSO")
 
 # for key, value in dict.items():
 #     numNodes, numTrucks, numIterations, numPopulations = value

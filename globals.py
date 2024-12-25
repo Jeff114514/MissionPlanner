@@ -35,16 +35,16 @@ def route_lengths():
     fa = upper/numTrucks*(1 + math.log(numTrucks)/2) # max route length 
     fb = upper/numTrucks/(1 + math.log(numTrucks)/2) # min route length
     a = random_range(numTrucks, upper)
-    while 1:
-        if all( i < fa and i > fb  for i in a):
-            break
-        else:
-            # if max(a) > fa:
-            #     fa+=0.05
-            if min(a) < fb - 1e-3:
-                fb-=0.05
-            a = random_range(numTrucks, upper)
-    # print(a)
+    # while 1:
+    #     if all( i < fa and i > fb  for i in a):
+    #         break
+    #     else:
+    #         # if max(a) > fa:
+    #         #     fa+=0.05
+    #         if min(a) < fb - 1e-3:
+    #             fb-=0.05
+    #         a = random_range(numTrucks, upper)
+    # # print(a)
     return a
 
 def print_all():

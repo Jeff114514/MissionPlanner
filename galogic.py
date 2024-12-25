@@ -5,6 +5,7 @@ crossover, mutation on populations to evolve them
 from population import *
 
 class GA:
+    mul = 0
 
     @classmethod
     # Evolve pop
@@ -85,7 +86,7 @@ class GA:
             index1 = random.randint(0, numTrucks - 1)
             index2 = random.randint(0, numTrucks - 1)
         #print ('Indexes selected: ' + str(index1) + ',' + str(index2))
-        if route.routeLengths[index1] <= 2 or route.routeLengths[index2] <= 2 or random.randrange(1) < mutationRate:
+        if route.routeLengths[index1] <= 3 or route.routeLengths[index2] <= 3:
             return
 
         #generate replacement range for 1

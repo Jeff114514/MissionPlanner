@@ -53,14 +53,14 @@ basic_route = globalRoute.getRoute()
 print ('Initial minimum distance: ' + str(globalRoute.getDistance()))
 
 # Start evolving
-cnt = 50
+cnt = 100
 for i in pbar(range(numGenerations)):
     cnt -= 1
     pop = GA.evolvePopulation(pop)
     localRoute = pop.getFittest()
     if globalRoute.getDistance() > localRoute.getDistance():
         globalRoute = localRoute
-        cnt = 50
+        cnt = 100
     yaxis.append(localRoute.getDistance())
     xaxis.append(i)
     if cnt <= 0:

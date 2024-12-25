@@ -71,21 +71,29 @@ class GA:
 
     @classmethod
     def swapMutation(cls, route):
+        if random.random() < mutationRate:
+            return
         index1, index2 = random.sample(range(numTrucks), 2)
         #print ('Indexes selected: ' + str(index1) + ',' + str(index2))
-        if route.routeLengths[index1] <= 2 or route.routeLengths[index2] <= 2 or random.randrange(1) < mutationRate:
+        if route.routeLengths[index1] <= 3 or route.routeLengths[index2] <= 3:
+            # If the route is too short, perform a simple swap mutation
+            if route.routeLengths[index1] > 1 and route.routeLengths[index2] > 1:
+                pos1 = random.randint(1, route.routeLengths[index1] - 1)
+                pos2 = random.randint(1, route.routeLengths[index2] - 1)
+                route.route[index1][pos1], route.route[index2][pos2] = route.route[index2][pos2], route.route[index1][pos1]
             return
+
         #generate replacement range for 1
         route1startPos = 0
         route1lastPos = 0
-        while route1startPos > route1lastPos or route1startPos == 1:
+        while route1startPos >= route1lastPos or route1startPos == 1:
             route1startPos = random.randint(1, route.routeLengths[index1] - 1)
             route1lastPos = random.randint(1, route.routeLengths[index1] - 1)
 
         #generate replacement range for 2
         route2startPos = 0
         route2lastPos = 0
-        while route2startPos > route2lastPos or route2startPos == 1:
+        while route2startPos >= route2lastPos or route2startPos == 1:
             route2startPos = random.randint(1, route.routeLengths[index2] - 1)
             route2lastPos= random.randint(1, route.routeLengths[index2] - 1)
         # print ('startPos, lastPos: ' + str(route1startPos) + ',' + str(route1lastPos) + ',' + str(route2startPos) + ',' + str(route2lastPos))

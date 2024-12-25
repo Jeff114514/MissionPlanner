@@ -27,9 +27,9 @@ class GA:
         for i in range(0, newPopulation.populationSize):
             cur_route = pop.getRoute(index[i])
             rand_val = random.random()
-            if rand_val < 0.16 + cls.momentum[i]:
+            if rand_val < 0.4 - cls.momentum[i]:
                 parent_route = cls.globalBest.getFittest()
-            elif rand_val < 0.32 + cls.momentum[i]:
+            elif rand_val < 0.7 - 2*cls.momentum[i]:
                 parent_route = pop.getFittest()
             else:
                 parent_route = cls.rouletteWheelSelection(pop, index, cumulative_fitness)
@@ -38,13 +38,13 @@ class GA:
             if child.getFitness() > cls.globalBest.getFittest().getFitness():
                 cls.globalBest.saveRoute(0, child)
             elif child.getFitness() > cur_route.getFitness():
-                if random.random() < 0.4 + cls.momentum[i]:
+                if random.random() < 0.5:
                     newPopulation.saveRoute(i, child)
                 else:
                     newPopulation.saveRoute(i, cur_route)
             else:
                 if cls.momentum[i] < 0.01:
-                    cls.momentum[i] = 0.2
+                    cls.momentum[i] = 0.1
                 newPopulation.saveRoute(i, cur_route)
             
         for i in range(0, newPopulation.populationSize):
@@ -96,19 +96,19 @@ class GA:
     def swapMutation(cls, route):
         index1, index2 = random.sample(range(numTrucks), 2)
         #print ('Indexes selected: ' + str(index1) + ',' + str(index2))
-        if route.routeLengths[index1] <= 2 or route.routeLengths[index2] <= 2 or random.randrange(1) < mutationRate:
+        if route.routeLengths[index1] <= 3 or route.routeLengths[index2] <= 3 or random.random() < mutationRate:
             return
         #generate replacement range for 1
         route1startPos = 0
         route1lastPos = 0
-        while route1startPos > route1lastPos or route1startPos == 1:
+        while route1startPos >= route1lastPos or route1startPos == 1:
             route1startPos = random.randint(1, route.routeLengths[index1] - 1)
             route1lastPos = random.randint(1, route.routeLengths[index1] - 1)
 
         #generate replacement range for 2
         route2startPos = 0
         route2lastPos = 0
-        while route2startPos > route2lastPos or route2startPos == 1:
+        while route2startPos >= route2lastPos or route2startPos == 1:
             route2startPos = random.randint(1, route.routeLengths[index2] - 1)
             route2lastPos= random.randint(1, route.routeLengths[index2] - 1)
         # print ('startPos, lastPos: ' + str(route1startPos) + ',' + str(route1lastPos) + ',' + str(route2startPos) + ',' + str(route2lastPos))
