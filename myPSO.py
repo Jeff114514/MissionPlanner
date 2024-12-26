@@ -7,14 +7,10 @@ class GA:
     @classmethod
     def evolvePopulation(cls, pop):
         newPopulation = Population(pop.populationSize, False)
-        if cls.globalBest is None:
-            cls.globalBest.saveRoute(0, pop.getFittest())
-        else:
-            if pop.getFittest().getFitness() > cls.globalBest.getFittest().getFitness():
-                cls.globalBest.saveRoute(0, pop.getFittest())
-                cls.momentum = [min(m*1.08, 0.2) for m in cls.momentum]
-            else:
-                cls.momentum = [m*0.9 for m in cls.momentum]
+        elitismOffset = 0
+        if elitism:
+            newPopulation.saveRoute(0, pop.getFittest())
+            elitismOffset = 1
 
         cumulative_fitness = []
         current_sum = 0
@@ -24,31 +20,53 @@ class GA:
             current_sum += pop.getRoute(index[i]).getFitness()
             cumulative_fitness.append(current_sum)
 
-        for i in range(0, newPopulation.populationSize):
+        best_route = pop.getFittest()
+        for i in range(elitismOffset, newPopulation.populationSize):
             cur_route = pop.getRoute(index[i])
+            if cur_route == best_route:
+                continue
+
             rand_val = random.random()
-            if rand_val < 0.4 - cls.momentum[i]:
+            if rand_val < 0.22 + cls.momentum[i]:
                 parent_route = cls.globalBest.getFittest()
-            elif rand_val < 0.7 - 2*cls.momentum[i]:
-                parent_route = pop.getFittest()
+            elif rand_val < 0.44 + 2*cls.momentum[i]:
+                parent_route = best_route
             else:
                 parent_route = cls.rouletteWheelSelection(pop, index, cumulative_fitness)
 
             child = cls.pmxCrossover(cur_route, parent_route)
             if child.getFitness() > cls.globalBest.getFittest().getFitness():
+                cls.momentum[i] = max(0.16, cls.momentum[i]*1.05)
                 cls.globalBest.saveRoute(0, child)
+                newPopulation.saveRoute(i, child)
             elif child.getFitness() > cur_route.getFitness():
-                if random.random() < 0.5:
+                if random.random() < 0.5 + 0.16*cls.momentum[i]:
+                    cls.momentum[i] = max(0.16, cls.momentum[i]*1.05)
                     newPopulation.saveRoute(i, child)
                 else:
                     newPopulation.saveRoute(i, cur_route)
+                    
             else:
-                if cls.momentum[i] < 0.01:
-                    cls.momentum[i] = 0.1
+                if cls.momentum[i] < 0.05 and random.random() < 0.5:
+                    cls.momentum[i] *= 1.25
                 newPopulation.saveRoute(i, cur_route)
+
+        mut = min(mutationRate*1.5 ,mutationRate-0.1*math.atan(current_sum/populationSize - newPopulation.getFittest().getFitness()))
             
-        for i in range(0, newPopulation.populationSize):
-            cls.swapMutation(newPopulation.getRoute(i))
+        for i in range(elitismOffset, newPopulation.populationSize):
+            if newPopulation.getRoute(i) == best_route:
+                continue
+            cls.swapMutation(newPopulation.getRoute(i), mut)
+
+        
+        if cls.globalBest is None:
+            cls.globalBest.saveRoute(0, pop.getFittest())
+        else:
+            if pop.getFittest().getFitness() > cls.globalBest.getFittest().getFitness():
+                cls.globalBest.saveRoute(0, pop.getFittest())
+                cls.momentum = [min(m*1.08, 0.2) for m in cls.momentum]
+            else:
+                cls.momentum = [m*0.9 for m in cls.momentum]
 
         return newPopulation
 
@@ -93,10 +111,17 @@ class GA:
         return child
 
     @classmethod
-    def swapMutation(cls, route):
+    def swapMutation(cls, route, mut):
+        if random.random() < mut:
+            return
         index1, index2 = random.sample(range(numTrucks), 2)
         #print ('Indexes selected: ' + str(index1) + ',' + str(index2))
-        if route.routeLengths[index1] <= 3 or route.routeLengths[index2] <= 3 or random.random() < mutationRate:
+        if route.routeLengths[index1] <= 3 or route.routeLengths[index2] <= 3:
+            # If the route is too short, perform a simple swap mutation
+            if route.routeLengths[index1] > 1 and route.routeLengths[index2] > 1:
+                pos1 = random.randint(1, route.routeLengths[index1] - 1)
+                pos2 = random.randint(1, route.routeLengths[index2] - 1)
+                route.route[index1][pos1], route.route[index2][pos2] = route.route[index2][pos2], route.route[index1][pos1]
             return
         #generate replacement range for 1
         route1startPos = 0
@@ -135,9 +160,12 @@ class GA:
     @classmethod
     def rouletteWheelSelection(cls, pop, index, cumulative_fitness):
         max_fitness = cumulative_fitness[-1]
-        pick = random.uniform(0, max_fitness)
-        idx = cls.binarySearch(cumulative_fitness, pick)
-        return pop.getRoute(index[idx])
+        winners = Population(2, False)
+        for i in range(2):
+            pick = random.uniform(0, max_fitness)
+            idx = cls.binarySearch(cumulative_fitness, pick)
+            winners.saveRoute(i, pop.getRoute(index[idx]))
+        return winners.getFittest()
 
     @classmethod
     def binarySearch(cls, cumulative_fitness, pick):

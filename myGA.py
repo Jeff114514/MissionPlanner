@@ -1,10 +1,12 @@
 from population import *
 
 class GA:
+    globalBest = Population(1, False)
 
     @classmethod
     def evolvePopulation(cls, pop):
-        newPopulation = Population(pop.populationSize, False)
+        newPopulation = Population(pop.populationSize, False)            
+
         elitismOffset = 0
         if elitism:
             newPopulation.saveRoute(0, pop.getFittest())
@@ -24,9 +26,13 @@ class GA:
             child = cls.pmxCrossover(parent1, parent2)
             newPopulation.saveRoute(i, child)
 
-        for i in range(elitismOffset, newPopulation.populationSize):
-            cls.swapMutation(newPopulation.getRoute(i))
+        mut = min(mutationRate*2 ,mutationRate-0.1*math.atan(current_sum/populationSize - newPopulation.getFittest().getFitness()))
 
+        for i in range(elitismOffset, newPopulation.populationSize):
+            cls.swapMutation(newPopulation.getRoute(i), mut)
+
+        if pop.getFittest().getFitness() > cls.globalBest.getFittest().getFitness():
+            cls.globalBest.saveRoute(0, pop.getFittest())
         return newPopulation
 
     @classmethod
@@ -70,8 +76,8 @@ class GA:
         return child
 
     @classmethod
-    def swapMutation(cls, route):
-        if random.random() < mutationRate:
+    def swapMutation(cls, route, mut):
+        if random.random() < mut :
             return
         index1, index2 = random.sample(range(numTrucks), 2)
         #print ('Indexes selected: ' + str(index1) + ',' + str(index2))
@@ -120,8 +126,8 @@ class GA:
     @classmethod
     def rouletteWheelSelection(cls, pop, index, cumulative_fitness):
         max_fitness = cumulative_fitness[-1]
-        winners = Population(3, False)
-        for i in range(3):
+        winners = Population(4, False)
+        for i in range(4):
             pick = random.uniform(0, max_fitness)
             idx = cls.binarySearch(cumulative_fitness, pick)
             winners.saveRoute(i, pop.getRoute(index[idx]))
